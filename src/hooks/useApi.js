@@ -1,24 +1,19 @@
-import { useState, useCallback } from "react";
-import apiClient from "../services/api.client.js";
+import { useState, useCallback } from 'react';
+import apiClient from '../services/api.client.js';
 
 export function useApi(endpoint = null, options = {}) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const {
-    retries = 1,
-    retryDelay = 1000,
-    onSuccess = null,
-    onError = null,
-  } = options;
+  const { retries = 1, retryDelay = 1000, onSuccess = null, onError = null } = options;
 
   const execute = useCallback(
     async (customEndpoint = null, fetchOptions = {}) => {
       const targetEndpoint = customEndpoint || endpoint;
 
       if (!targetEndpoint) {
-        throw new Error("No endpoint provided");
+        throw new Error('No endpoint provided');
       }
 
       let attempt = 0;
@@ -69,7 +64,7 @@ export function useApi(endpoint = null, options = {}) {
       const targetEndpoint = customEndpoint || endpoint;
 
       if (!targetEndpoint) {
-        throw new Error("No endpoint provided");
+        throw new Error('No endpoint provided');
       }
 
       try {
@@ -107,7 +102,7 @@ export function useApi(endpoint = null, options = {}) {
       const targetEndpoint = customEndpoint || endpoint;
 
       if (!targetEndpoint) {
-        throw new Error("No endpoint provided");
+        throw new Error('No endpoint provided');
       }
 
       try {
@@ -143,7 +138,7 @@ export function useApi(endpoint = null, options = {}) {
       const targetEndpoint = customEndpoint || endpoint;
 
       if (!targetEndpoint) {
-        throw new Error("No endpoint provided");
+        throw new Error('No endpoint provided');
       }
 
       try {

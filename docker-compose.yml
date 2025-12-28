@@ -1,4 +1,4 @@
-version: "3.8"
+version: '3.8'
 
 services:
   frontend:
@@ -6,8 +6,8 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     environment:
       - NODE_ENV=production
     volumes:
@@ -23,7 +23,7 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "5173:5173"
+      - '5173:5173'
     environment:
       - NODE_ENV=development
     volumes:

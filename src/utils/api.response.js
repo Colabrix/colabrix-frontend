@@ -1,14 +1,14 @@
 function decodeObfuscatedData(obfuscatedPayload) {
   try {
-    const parts = obfuscatedPayload.split(":");
+    const parts = obfuscatedPayload.split(':');
     if (parts.length !== 2) {
-      throw new Error("Invalid payload format");
+      throw new Error('Invalid payload format');
     }
 
     const encodedData = parts[1];
     const obfuscated = atob(encodedData);
 
-    let base64String = "";
+    let base64String = '';
     for (let i = 0; i < obfuscated.length; i++) {
       const charCode = obfuscated.charCodeAt(i);
       const originalChar = charCode - (i % 7) - 3;
