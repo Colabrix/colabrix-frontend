@@ -1,7 +1,7 @@
-import axios from "axios";
-import { processApiResponse } from "../utils/api.response.js";
+import axios from 'axios';
+import { processApiResponse } from '../utils/api.response.js';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 class ColabrixApiClient {
   constructor() {
@@ -9,7 +9,7 @@ class ColabrixApiClient {
       baseURL: API_BASE_URL,
       timeout: 30000,
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
 
@@ -19,7 +19,7 @@ class ColabrixApiClient {
   setupInterceptors() {
     this.instance.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem("auth_token");
+        const token = localStorage.getItem('auth_token');
         if (token) {
           config.headers.Authorization = `Bearer ${token}`;
         }
@@ -35,7 +35,7 @@ class ColabrixApiClient {
         const rawData = response.data;
 
         if (!rawData.success) {
-          throw new Error(rawData.message || "API request failed");
+          throw new Error(rawData.message || 'API request failed');
         }
 
         const processedData = processApiResponse(rawData);
@@ -50,12 +50,11 @@ class ColabrixApiClient {
       },
       (error) => {
         if (error.response?.status === 401) {
-          localStorage.removeItem("auth_token");
-          window.location.href = "/login";
+          localStorage.removeItem('auth_token');
+          window.location.href = '/login';
         }
 
-        const message =
-          error.response?.data?.message || error.message || "Network error";
+        const message = error.response?.data?.message || error.message || 'Network error';
         throw new Error(message);
       }
     );
@@ -82,15 +81,15 @@ class ColabrixApiClient {
   }
 
   setAuthToken(token) {
-    localStorage.setItem("auth_token", token);
+    localStorage.setItem('auth_token', token);
   }
 
   removeAuthToken() {
-    localStorage.removeItem("auth_token");
+    localStorage.removeItem('auth_token');
   }
 
   getAuthToken() {
-    return localStorage.getItem("auth_token");
+    return localStorage.getItem('auth_token');
   }
 }
 
