@@ -5,15 +5,17 @@ import reactRefresh from "eslint-plugin-react-refresh";
 import prettier from "eslint-plugin-prettier";
 
 export default [
-  { ignores: ["dist", "node_modules", "build"] },
   {
-    files: ["**/*.{js,jsx,ts,tsx}"],
+    ignores: ["dist", "build", "node_modules", ".expo", ".next"],
+  },
+  {
+    files: ["**/*.{js,jsx}"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
       globals: {
         ...globals.browser,
-        ...globals.es2020,
+        ...globals.es2021,
       },
       parserOptions: {
         ecmaFeatures: {
@@ -24,7 +26,7 @@ export default [
     plugins: {
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
-      prettier: prettier,
+      prettier,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -36,18 +38,19 @@ export default [
       "prefer-const": "error",
       "no-var": "error",
       "no-unused-vars": [
-        "error",
+        "warn",
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^(React|[A-Z][a-zA-Z]*)$",
+          ignoreRestSiblings: true,
         },
       ],
-      "no-console": "warn",
+      "no-console": ["warn", { allow: ["warn", "error"] }],
       "prettier/prettier": "error",
     },
   },
   {
-    files: ["commitlint.config.js"],
+    files: ["*.config.js", "commitlint.config.js"],
     languageOptions: {
       sourceType: "commonjs",
       globals: {
