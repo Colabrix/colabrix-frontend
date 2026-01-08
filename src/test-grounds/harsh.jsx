@@ -1,7 +1,12 @@
 import React from 'react';
+import Sidebar from '../components/ui/Sidebar/Sidebar';
 
-function Harsh() {
-  return <div>Harsh</div>;
+function harsh() {
+  return (
+    <div className="flex h-screen w-screen">
+      <Sidebar />
+    </div>
+  );
 }
 
-export default Harsh;
+export default harsh;
