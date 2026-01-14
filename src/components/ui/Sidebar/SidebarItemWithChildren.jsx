@@ -14,12 +14,13 @@ function SidebarItemWithChildren({ item, isCollapsed, activeTab, setActiveTab })
         className="text-sidebarItemFont relative last:mb-0"
         onMouseEnter={() => setShowToolTip(true)}
         onMouseLeave={() => setShowToolTip(false)}
+        // onClick={() => setActiveTab(item.key)}
       >
         <motion.a
           className={clsx(
             isCollapsed && 'justify-center',
-            activeTab === item.key && 'bg-purple-300',
-            'flex items-center justify-start gap-2 overflow-x-hidden rounded-2xl p-3 hover:bg-gray-300'
+            activeTab === item.key ? 'bg-primary' : 'hover:bg-gray-300',
+            'flex items-center justify-start gap-2 overflow-x-hidden rounded-2xl p-3'
           )}
           href={item.href}
         >
@@ -31,7 +32,7 @@ function SidebarItemWithChildren({ item, isCollapsed, activeTab, setActiveTab })
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -6 }}
                 transition={{ duration: 0.2 }}
-                className={clsx('block text-nowrap whitespace-nowrap')}
+                className={clsx('block whitespace-nowrap')}
               >
                 {item.title}
               </motion.span>
@@ -44,12 +45,13 @@ function SidebarItemWithChildren({ item, isCollapsed, activeTab, setActiveTab })
       </motion.div>
       <motion.div
         layout
-        className={clsx(isCollapsed ? 'ml-0' : 'ml-8', 'transition-all duration-300')}
+        className={clsx(isCollapsed ? 'ml-0' : 'ml-8', 'flex flex-col transition-all duration-300')}
       >
-        {item.children.slice(0, 3).map((child) => (
+        {item.children.slice(0, 3).map((child, index) => (
           <ChildItems
             key={child.key}
             item={child}
+            isLast={2 === index}
             isCollapsed={isCollapsed}
             activeTab={activeTab}
             setActiveTab={setActiveTab}

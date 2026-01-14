@@ -5,7 +5,7 @@ import SidebarToolTip from './SidebarToolTip';
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 
-function ChildItems({ item, isCollapsed, activeTab, setActiveTab }) {
+function ChildItems({ item, isCollapsed, isLast, activeTab, setActiveTab }) {
   const [showSidebarToolTip, setShowSidebarToolTip] = useState(false);
   return (
     <motion.div
@@ -13,12 +13,27 @@ function ChildItems({ item, isCollapsed, activeTab, setActiveTab }) {
       className="relative pb-2"
       onMouseEnter={() => setShowSidebarToolTip(true)}
       onMouseLeave={() => setShowSidebarToolTip(false)}
+      onClick={() => setActiveTab(item.key)}
     >
+      <span
+        className={clsx(
+          isLast ? 'h-[40%]' : 'h-full',
+          isCollapsed ? 'hidden' : 'block',
+          'absolute top-0 -left-3 w-[2px] bg-gray-300'
+        )}
+      />
+      <span
+        className={clsx(
+          isCollapsed && 'hidden',
+          'absolute top-3 -left-3 h-3 w-3 rounded-bl-lg border-b-2 border-l border-gray-300'
+        )}
+      />
       <div
         href={item.href}
         className={clsx(
-          isCollapsed && 'justify-center py-3',
-          'flex items-center gap-2 rounded-xl p-2'
+          activeTab === item.key ? 'bg-primary' : 'hover:bg-gray-300',
+          isCollapsed && 'pl-[14px]',
+          'relative flex items-center gap-2 rounded-xl p-2 transition-all'
         )}
       >
         <Backpack size={20} className="block w-fit shrink-0" />
@@ -30,7 +45,7 @@ function ChildItems({ item, isCollapsed, activeTab, setActiveTab }) {
               transition={{ duration: 0.2 }}
               className={clsx('block text-nowrap whitespace-nowrap')}
             >
-              {item.title}
+              {item.title} {isLast ? 'yes' : 'no'}
             </motion.span>
           )}
         </AnimatePresence>

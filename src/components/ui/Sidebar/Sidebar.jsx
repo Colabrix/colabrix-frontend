@@ -11,13 +11,13 @@ const sidebarItems = [
     key: 'foryou',
     title: 'For You',
     icon: LayoutDashboard,
-    href: '/foryou',
+    href: '#',
   },
   {
     key: 'calendar',
     title: 'Calendar',
     icon: Calendar,
-    href: '/calendar',
+    href: '#',
   },
   {
     key: 'pm',
@@ -35,7 +35,7 @@ const sidebarItems = [
     key: 'messages',
     title: 'Messages',
     icon: MessageCircle,
-    href: '/messages',
+    href: '#',
   },
 ];
 
