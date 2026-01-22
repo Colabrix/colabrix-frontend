@@ -8,5 +8,5 @@ body {
 @theme {
   --font-family: 'Inter', sans-serif;
   --color-test: rgba(36, 34, 32, 0.9);
-  --color-primary: #b9bbf6;
+  --color-primary: rgb(195 196 251);
 }
