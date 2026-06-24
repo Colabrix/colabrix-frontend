@@ -10,7 +10,7 @@ function ChildItems({ item, isCollapsed, isLast, activeTab, setActiveTab }) {
   return (
     <motion.div
       layout
-      className="relative pb-2"
+      className="sidebar-text relative pb-2"
       onMouseEnter={() => setShowSidebarToolTip(true)}
       onMouseLeave={() => setShowSidebarToolTip(false)}
       onClick={() => setActiveTab(item.key)}

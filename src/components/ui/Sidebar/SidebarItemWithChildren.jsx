@@ -11,7 +11,7 @@ function SidebarItemWithChildren({ item, isCollapsed, activeTab, setActiveTab })
   return (
     <div>
       <motion.div
-        className="text-sidebarItemFont relative last:mb-0"
+        className="sidebar-text relative last:mb-0"
         onMouseEnter={() => setShowToolTip(true)}
         onMouseLeave={() => setShowToolTip(false)}
         // onClick={() => setActiveTab(item.key)}

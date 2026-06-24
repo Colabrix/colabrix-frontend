@@ -47,15 +47,18 @@ function Sidebar() {
     <motion.div
       animate={{ width: isCollapsed ? 64 : 256 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      className={clsx(isCollapsed ? 'w-16' : 'w-64', 'relative flex flex-col bg-gray-100 p-2')}
+      className={clsx(
+        isCollapsed ? 'w-16' : 'w-64',
+        'relative flex h-full flex-col border-r border-border-gray p-2'
+      )}
     >
       <div
         className="absolute top-10 -right-3 rounded-full bg-primary"
         onClick={() => setIsCollapsed((prev) => !prev)}
       >
-        <ChevronLeft />
+        <ChevronLeft className="text-[#2422207A]" />
       </div>
-      <div className="mt-20 w-full text-[14px] font-medium text-test">
+      <div className="mt-20 w-full text-[14px] text-primary-gray">
         {sidebarItems.map((item) => {
           if (item.children) {
             return (

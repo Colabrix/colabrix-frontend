@@ -8,14 +8,14 @@ function SidebarItem({ item, isCollapsed, activeTab, setActiveTab }) {
   const Icon = item.icon;
   return (
     <motion.div
-      className="relative pb-2 last:pb-0"
+      className="sidebar-text relative pb-2 last:pb-0"
       onMouseEnter={() => setShowToolTip(true)}
       onMouseLeave={() => setShowToolTip(false)}
       onClick={() => setActiveTab(item.key)}
     >
       <motion.a
         className={clsx(
-          activeTab === item.key ? 'bg-primary' : 'hover:bg-gray-300',
+          activeTab === item.key ? 'bg-primary text-[#242220]' : 'hover:bg-gray-300',
           'flex items-center justify-start gap-2 overflow-x-hidden rounded-2xl p-3'
         )}
         href={item.href}
