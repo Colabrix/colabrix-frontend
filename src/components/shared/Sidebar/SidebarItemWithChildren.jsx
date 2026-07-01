@@ -14,17 +14,17 @@ function SidebarItemWithChildren({ item, isCollapsed, activeTab, setActiveTab })
         className="sidebar-text relative last:mb-0"
         onMouseEnter={() => setShowToolTip(true)}
         onMouseLeave={() => setShowToolTip(false)}
-        // onClick={() => setActiveTab(item.key)}
+        onClick={() => setActiveTab(item.key)}
       >
         <motion.a
           className={clsx(
             isCollapsed && 'justify-center',
-            activeTab === item.key ? 'bg-primary' : 'hover:bg-gray-300',
-            'flex items-center justify-start gap-2 overflow-x-hidden rounded-2xl p-3'
+            activeTab === item.key ? 'bg-primary text-white' : 'hover:bg-indigo-50',
+            'flex items-center justify-start gap-2 overflow-x-hidden rounded-xl p-2'
           )}
           href={item.href}
         >
-          <Icon size={24} className="block w-fit shrink-0" />
+          <Icon size={16} className="block w-fit shrink-0" />
           <AnimatePresence>
             {!isCollapsed && (
               <motion.span

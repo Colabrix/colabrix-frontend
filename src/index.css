@@ -9,14 +9,14 @@ body {
 @theme {
   --font-family: 'Inter', sans-serif;
   --color-background: #f8f9fa;
-  --color-primary-gray: #2422208f;
+  --color-primary-gray: #242220;
   --color-secondary-gray: #7c7c7c;
-  --color-primary: #b9bbf6;
-  --color-border-gray: #0000001a;
+  --color-primary: #6366f1;
+  --color-border-gray: #e2e8f0;
 }
 
 .sidebar-text {
   font-weight: 500;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--color-primary-gray);
 }

@@ -16,9 +16,6 @@ const VIEWS = {
   WEEK: 'week',
 };
 
-// Mock Data
-// Mock Data - Resources removed as per request
-
 const TODAY = new Date();
 const YEAR = TODAY.getFullYear();
 const MONTH = TODAY.getMonth();
@@ -79,19 +76,13 @@ function Timeline() {
   const startX = useRef(0);
   const scrollLeft = useRef(0);
 
-  // Helper to get days for the grid
   const getDays = () => {
     const days = [];
-    const center = new Date(currentDate); // Center point
-
-    // Generate a wide range: e.g., 60 days before and 60 days after
+    const center = new Date(currentDate);
     const range = 60;
-
-    // Start of the window
     const start = new Date(center);
     start.setDate(start.getDate() - range);
 
-    // Total days = range * 2
     for (let i = 0; i < range * 2; i++) {
       const d = new Date(start);
       d.setDate(start.getDate() + i);
@@ -104,10 +95,8 @@ function Timeline() {
   const COLUMN_WIDTH = view === VIEWS.WEEK ? 120 : 60;
 
   const handleToday = () => {
-    // Scroll to center where Today is likely located
     if (scrollContainerRef.current) {
       const container = scrollContainerRef.current;
-      // Calculate position of Today
       const dayIndex = days.findIndex((d) => isToday(d));
       if (dayIndex !== -1) {
         const scrollPos = dayIndex * COLUMN_WIDTH - container.clientWidth / 2 + COLUMN_WIDTH / 2;
@@ -116,7 +105,6 @@ function Timeline() {
     }
   };
 
-  // Drag Scroll Handlers
   const handleMouseDown = (e) => {
     isDragging.current = true;
     startX.current = e.pageX - scrollContainerRef.current.offsetLeft;
@@ -142,11 +130,10 @@ function Timeline() {
     if (!isDragging.current) return;
     e.preventDefault();
     const x = e.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX.current) * 1.5; // Scroll-fast multiplier
+    const walk = (x - startX.current) * 1.5;
     scrollContainerRef.current.scrollLeft = scrollLeft.current - walk;
   };
 
-  // Scroll to today on mount
   useEffect(() => {
     if (scrollContainerRef.current) {
       const dayIndex = days.findIndex((d) => isToday(d));
@@ -156,7 +143,7 @@ function Timeline() {
         scrollContainerRef.current.scrollLeft = scrollPos;
       }
     }
-  }, []); // Run once on mount (window size dependency omitted for simplicity)
+  }, []);
 
   const isToday = (date) => {
     const today = new Date();
@@ -167,12 +154,10 @@ function Timeline() {
     );
   };
 
-  // Render Functions
   const renderHeader = () => {
     return (
       <div className="flex flex-col border-b border-gray-200 bg-white px-6 py-4">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          {/* Right: Actions */}
           <div className="flex items-center gap-3">
             <button
               onClick={handleToday}
@@ -191,15 +176,11 @@ function Timeline() {
     const totalWidth = days.length * COLUMN_WIDTH;
     const start = days[0];
 
-    // Calculate Today Position
     const today = new Date();
-    // Reset time components for accurate day comparison if needed, or keep precise for line
-    // For line position, exact time is better.
     const timeDiff = today.getTime() - start.getTime();
     const dayDiff = timeDiff / (1000 * 3600 * 24);
     const todayLeft = dayDiff * COLUMN_WIDTH;
 
-    // Check if today is within range (roughly)
     const showTodayLine = dayDiff >= -0.5 && dayDiff <= days.length;
 
     return (
@@ -212,7 +193,6 @@ function Timeline() {
         onMouseMove={handleMouseMove}
       >
         <div className="flex min-h-full min-w-max flex-col">
-          {/* Header: Dates */}
           <div className="sticky top-0 z-20 flex h-12 border-b border-gray-200 bg-gray-50/95 shadow-sm backdrop-blur-sm">
             {days.map((day, i) => {
               const isFirstDay = day.getDate() === 1;
@@ -256,9 +236,7 @@ function Timeline() {
             })}
           </div>
 
-          {/* Timeline Content */}
           <div className="relative min-h-full flex-1">
-            {/* Background Grid */}
             <div className="pointer-events-none absolute inset-0 z-0 flex min-h-full">
               {days.map((day, i) => {
                 const isFirstDay = day.getDate() === 1;
@@ -276,7 +254,6 @@ function Timeline() {
               })}
             </div>
 
-            {/* Today Line */}
             {showTodayLine && (
               <div
                 className="pointer-events-none absolute top-0 bottom-0 z-30 border-l-2 border-primary"
@@ -288,7 +265,6 @@ function Timeline() {
               </div>
             )}
 
-            {/* Events */}
             <div className="relative z-10 space-y-1 pt-2">
               {EVENTS.map((event) => {
                 const startDate = event.start;
@@ -297,7 +273,7 @@ function Timeline() {
                 const offsetDays = (startDate - start) / (1000 * 60 * 60 * 24);
                 const durationDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
 
-                if (offsetDays + durationDays < -5 || offsetDays > days.length) return null; // Loose bounds
+                if (offsetDays + durationDays < -5 || offsetDays > days.length) return null;
 
                 const left = offsetDays * COLUMN_WIDTH;
                 const width = Math.max(durationDays * COLUMN_WIDTH, 4);
