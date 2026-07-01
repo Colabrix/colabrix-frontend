@@ -315,7 +315,6 @@ function Calendar() {
         </div>
         <div className="flex-1 overflow-y-auto">
           <div className="relative grid grid-cols-8">
-            {/* Time Column */}
             <div className="col-span-1 border-r border-gray-100">
               {hours.map((hour) => (
                 <div
@@ -334,7 +333,6 @@ function Calendar() {
                 </div>
               ))}
             </div>
-            {/* Days Columns */}
             {days.map((day, i) => (
               <div
                 key={i}
@@ -349,7 +347,6 @@ function Calendar() {
                     className="h-16 border-b border-gray-50 transition-colors hover:bg-gray-50/50"
                   ></div>
                 ))}
-                {/* Mock events for week view logic would go here */}
                 {MOCK_EVENTS.filter((e) => e.day === day.getDate()).map((evt, idx) => (
                   <div
                     key={idx}

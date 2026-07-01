@@ -3,8 +3,19 @@ import React from 'react';
 import { useState } from 'react';
 import SidebarItemWithChildren from './SidebarItemWithChildren';
 import SidebarItem from './SidebarItem';
-import { Calendar, ChevronLeft, KanbanSquare, LayoutDashboard, MessageCircle } from 'lucide-react';
-import { motion } from 'motion/react';
+import {
+  BarChart2,
+  Calendar,
+  CheckSquare,
+  ChevronLeft,
+  Inbox,
+  KanbanSquare,
+  LayoutDashboard,
+  LayoutGrid,
+  MessageCircle,
+  Zap,
+} from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 
 const sidebarItems = [
   {
@@ -24,11 +35,11 @@ const sidebarItems = [
     title: 'Project Management',
     icon: KanbanSquare,
     children: [
-      { key: 'overview', title: 'Overview', href: '/pm/overview' },
-      { key: 'tasks', title: 'Tasks', href: '/pm/tasks' },
-      { key: 'sprints', title: 'Sprints', href: '/pm/sprints' },
-      { key: 'backlog', title: 'Backlog', href: '/pm/backlog' },
-      { key: 'reports', title: 'Reports', href: '/pm/reports' },
+      { key: 'overview', title: 'Overview', href: '/pm/overview', icon: LayoutGrid },
+      { key: 'tasks', title: 'Tasks', href: '/pm/tasks', icon: CheckSquare },
+      { key: 'sprints', title: 'Sprints', href: '/pm/sprints', icon: Zap },
+      { key: 'backlog', title: 'Backlog', href: '/pm/backlog', icon: Inbox },
+      { key: 'reports', title: 'Reports', href: '/pm/reports', icon: BarChart2 },
     ],
   },
   {
@@ -53,12 +64,34 @@ function Sidebar() {
       )}
     >
       <div
-        className="absolute top-10 -right-3 rounded-full bg-primary"
+        className="absolute top-10 -right-3 cursor-pointer rounded-full bg-primary p-0.5"
         onClick={() => setIsCollapsed((prev) => !prev)}
       >
-        <ChevronLeft className="text-[#2422207A]" />
+        <motion.div animate={{ rotate: isCollapsed ? 180 : 0 }} transition={{ duration: 0.3 }}>
+          <ChevronLeft size={16} className="text-white" />
+        </motion.div>
       </div>
-      <div className="mt-20 w-full text-[14px] text-primary-gray">
+
+      <div className="flex items-center gap-2 px-2 py-3">
+        <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary">
+          <span className="text-xs font-bold text-white">C</span>
+        </div>
+        <AnimatePresence>
+          {!isCollapsed && (
+            <motion.span
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -6 }}
+              transition={{ duration: 0.2 }}
+              className="text-sm font-semibold whitespace-nowrap text-primary-gray"
+            >
+              Colabrix
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <div className="w-full text-[13px] text-primary-gray">
         {sidebarItems.map((item) => {
           if (item.children) {
             return (

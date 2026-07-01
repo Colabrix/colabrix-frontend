@@ -34,6 +34,4 @@ function processApiResponse(apiResponse) {
   return apiResponse.data;
 }
 
-function debugApiResponse() {}
-
-export { processApiResponse, debugApiResponse };
+export { processApiResponse };

@@ -12,12 +12,10 @@ import {
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-// --- UTILS ---
 function cn(...inputs) {
   return twMerge(clsx(inputs));
 }
 
-// --- MOCK DATA ---
 const generateData = () => {
   const columnTitles = [
     'BACKLOG',
@@ -35,7 +33,6 @@ const generateData = () => {
   const columns = {};
   let idCounter = 1;
 
-  // Yeh arrays define karo PEHLE
   const priorityColors = ['purple', 'blue', 'orange', 'red', 'green'];
 
   const possibleTags = [
@@ -53,7 +50,6 @@ const generateData = () => {
       id: colId,
       title: title,
       items: Array.from({ length: 6 }).map((_, j) => {
-        // Random 2-4 tags select karo
         const numTags = Math.floor(Math.random() * 3) + 2;
         const shuffled = [...possibleTags].sort(() => 0.5 - Math.random());
         const selectedTags = shuffled.slice(0, numTags);
@@ -62,11 +58,11 @@ const generateData = () => {
           id: `task-${i}-${j}`,
           content: `Task ${idCounter++}: ${title}`,
           desc: 'Optimize the database query logic and improve performance metrics.',
-          tags: selectedTags, // Dynamic tags, hardcoded nahi
+          tags: selectedTags,
           priorityColor: priorityColors[Math.floor(Math.random() * priorityColors.length)],
           date: new Date(2025, 0, Math.floor(Math.random() * 28) + 1),
           comments: Math.floor(Math.random() * 5),
-          assignee: Math.random() > 0.3 ? 'John Doe' : null, // Yeh missing tha
+          assignee: Math.random() > 0.3 ? 'John Doe' : null,
         };
       }),
     };
@@ -74,10 +70,7 @@ const generateData = () => {
   return columns;
 };
 
-// --- COMPONENTS ---
-
 const TaskCard = React.memo(({ item, index }) => {
-  // Helper function for tag colors
   const getTagClasses = (color) => {
     const colorMap = {
       orange: 'bg-orange-50 text-orange-600 border-orange-100',
@@ -90,7 +83,6 @@ const TaskCard = React.memo(({ item, index }) => {
     return colorMap[color] || 'bg-gray-50 text-gray-600 border-gray-100';
   };
 
-  // Helper function for priority border color
   const getBorderColor = (color) => {
     const colorMap = {
       purple: 'border-l-purple-400',
@@ -102,7 +94,6 @@ const TaskCard = React.memo(({ item, index }) => {
     return colorMap[color] || 'border-l-gray-400';
   };
 
-  // Format date as DD/MM/YYYY
   const formatDate = (date) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
@@ -129,7 +120,6 @@ const TaskCard = React.memo(({ item, index }) => {
                 : 'shadow-md hover:shadow-lg'
             )}
           >
-            {/* Decorative Left Border Line - Absolute positioned */}
             <div
               className={cn(
                 'absolute top-[52px] -left-[2px] h-[62px] w-1 rounded-full',
@@ -147,7 +137,6 @@ const TaskCard = React.memo(({ item, index }) => {
               )}
             />
 
-            {/* Tags Row */}
             <div className="mb-3 flex flex-wrap gap-2">
               {item.tags.map((tag, idx) => (
                 <span
@@ -162,19 +151,16 @@ const TaskCard = React.memo(({ item, index }) => {
               ))}
             </div>
 
-            {/* Title & Description - No border, just content */}
             <div className="mb-3">
               <h4 className="mb-1 text-base font-bold text-gray-900">{item.content}</h4>
               <p className="text-xs text-gray-500">{item.desc}</p>
             </div>
 
-            {/* Assignee */}
             <div className="mb-3 flex items-center gap-2 border-b border-gray-200 pb-3">
               <div className="h-4 w-4 rounded-full bg-gray-300" />
               <span className="text-xs text-gray-600">{item.assignee || 'To be assigned'}</span>
             </div>
 
-            {/* Footer: Date and Comments */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-gray-500">
                 <Calendar size={14} />
@@ -194,12 +180,9 @@ const TaskCard = React.memo(({ item, index }) => {
   );
 });
 
-// 2. Column Component (SCROLL REMOVED)
 const KanbanColumn = ({ columnId, column }) => {
   return (
-    // Changed: No fixed height, No overflow-y-auto. Removed h-full.
     <div className="mx-2 flex h-fit w-[342px] min-w-[342px] flex-col rounded-xl border border-[#FDFDFD]/50 bg-[#FDFDFD]">
-      {/* Header - Added 'sticky' so it stays visible if page scrolls */}
       <div className="sticky top-0 z-10 flex items-center justify-between rounded-t-xl border-b border-[#FDFDFD] bg-[#FDFDFD] p-4">
         <div className="flex items-center gap-2">
           <h2 className="text-base font-bold tracking-wider uppercase">{column.title}</h2>
@@ -210,14 +193,13 @@ const KanbanColumn = ({ columnId, column }) => {
         <CirclePlus size={18} className="cursor-pointer hover:text-gray-700" />
       </div>
 
-      {/* Droppable Area - REMOVED overflow-y-auto */}
       <Droppable droppableId={columnId}>
         {(provided, snapshot) => (
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
             className={cn(
-              'min-h-[150px] flex-1 px-3 pb-4 transition-colors duration-200', // Min-height ensures drop area exists
+              'min-h-[150px] flex-1 px-3 pb-4 transition-colors duration-200',
               snapshot.isDraggingOver ? 'bg-blue-50/50' : ''
             )}
           >
@@ -232,7 +214,6 @@ const KanbanColumn = ({ columnId, column }) => {
   );
 };
 
-// 3. Main Board
 export default function UltimateKanban() {
   const [columns, setColumns] = useState(generateData());
 
@@ -269,16 +250,12 @@ export default function UltimateKanban() {
         </div>
       </header>
 
-      {/* Main Board Container */}
-      {/* Changed: overflow-auto allows BOTH X and Y scrolling on the main window */}
       <div className="relative flex-1 overflow-auto bg-[#F9F9F9]">
         <DragDropContext onDragEnd={onDragEnd}>
-          {/* w-max ensures horizontal scroll triggers. h-full ensures full height canvas */}
           <div className="flex h-full w-max items-start p-6">
             {Object.values(columns).map((column) => (
               <KanbanColumn key={column.id} columnId={column.id} column={column} />
             ))}
-            {/* Spacer for adding new section */}
             <div className="w-[320px] min-w-[320px] px-2">
               <button className="flex w-full items-center gap-2 rounded-xl border-2 border-dashed border-gray-200 p-3 text-gray-400 transition-colors hover:border-gray-300 hover:text-gray-800">
                 <Plus size={20} />
