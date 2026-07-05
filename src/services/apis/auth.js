@@ -11,6 +11,8 @@ export async function register(email, password, phone = null) {
 
 export async function verifyEmail(token) {
   const res = await apiClient.post('/v1/auth/verify-email', { token });
+  setAuthToken(res.data.accessToken);
+  localStorage.setItem('refresh_token', res.data.refreshToken);
   return res.data;
 }
 
@@ -50,5 +52,13 @@ export async function changePassword(currentPassword, newPassword) {
 
 export async function getMe() {
   const res = await apiClient.get('/v1/auth/me');
+  return res.data;
+}
+
+export async function updateProfile(name, avatarUrl) {
+  const res = await apiClient.patch('/v1/auth/me', {
+    ...(name && { name }),
+    ...(avatarUrl && { avatarUrl }),
+  });
   return res.data;
 }

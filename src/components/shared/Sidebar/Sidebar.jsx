@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import SidebarItemWithChildren from './SidebarItemWithChildren';
 import SidebarItem from './SidebarItem';
 import {
@@ -8,6 +9,7 @@ import {
   Calendar,
   CheckSquare,
   ChevronLeft,
+  ChevronsUpDown,
   Inbox,
   KanbanSquare,
   LayoutDashboard,
@@ -50,7 +52,8 @@ const sidebarItems = [
   },
 ];
 
-function Sidebar() {
+function Sidebar({ organization }) {
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState('foryou');
 
@@ -72,24 +75,31 @@ function Sidebar() {
         </motion.div>
       </div>
 
-      <div className="flex items-center gap-2 px-2 py-3">
+      <button
+        type="button"
+        onClick={() => navigate('/org/select')}
+        className="flex w-full items-center gap-2 rounded-xl px-2 py-3 transition-colors duration-200 hover:bg-indigo-50"
+      >
         <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-primary">
           <span className="text-xs font-bold text-white">C</span>
         </div>
         <AnimatePresence>
           {!isCollapsed && (
-            <motion.span
+            <motion.div
               initial={{ opacity: 0, x: -6 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -6 }}
               transition={{ duration: 0.2 }}
-              className="text-sm font-semibold whitespace-nowrap text-primary-gray"
+              className="flex flex-1 items-center justify-between overflow-hidden"
             >
-              Colabrix
-            </motion.span>
+              <span className="truncate text-sm font-semibold whitespace-nowrap text-primary-gray">
+                {organization?.name ?? 'Colabrix'}
+              </span>
+              <ChevronsUpDown size={13} className="shrink-0 text-secondary-gray" />
+            </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </button>
 
       <div className="w-full text-[13px] text-primary-gray">
         {sidebarItems.map((item) => {
