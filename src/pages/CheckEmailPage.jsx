@@ -1,7 +1,12 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { MailCheck } from 'lucide-react';
+import clsx from 'clsx';
+import { resendVerification } from '../services/apis/auth.js';
+import ErrorBanner from '../components/ui/ErrorBanner.jsx';
+
+const RESEND_COOLDOWN_SECONDS = 60;
 
 const containerVariants = {
   hidden: {},
@@ -15,7 +20,36 @@ const itemVariants = {
 
 export default function CheckEmailPage() {
   const location = useLocation();
-  const email = location.state?.email;
+  const [searchParams] = useSearchParams();
+  const email = location.state?.email || searchParams.get('email') || '';
+
+  const [cooldown, setCooldown] = useState(0);
+  const [resending, setResending] = useState(false);
+  const [resendError, setResendError] = useState('');
+  const [resendSuccess, setResendSuccess] = useState(false);
+
+  useEffect(() => {
+    if (cooldown <= 0) return undefined;
+    const timer = setInterval(() => setCooldown((c) => c - 1), 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  async function handleResend() {
+    if (!email || resending || cooldown > 0) return;
+
+    setResending(true);
+    setResendError('');
+    setResendSuccess(false);
+    try {
+      await resendVerification(email);
+      setResendSuccess(true);
+      setCooldown(RESEND_COOLDOWN_SECONDS);
+    } catch (err) {
+      setResendError(err.message || 'Something went wrong. Please try again.');
+    } finally {
+      setResending(false);
+    }
+  }
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-white px-8">
@@ -44,12 +78,41 @@ export default function CheckEmailPage() {
           account and get started.
         </motion.p>
 
-        <motion.p variants={itemVariants} className="mt-8 text-sm text-secondary-gray">
-          Didn't get it? Check your spam folder, or{' '}
+        <motion.div variants={itemVariants} className="mt-6 text-left">
+          <ErrorBanner message={resendError} />
+          {resendSuccess && !resendError && (
+            <p className="text-[13px] leading-relaxed text-green-600">
+              Verification email sent — check your inbox.
+            </p>
+          )}
+        </motion.div>
+
+        <motion.div variants={itemVariants} className="mt-4">
+          <button
+            type="button"
+            onClick={handleResend}
+            disabled={!email || resending || cooldown > 0}
+            className={clsx(
+              'w-full rounded-full border border-border-gray bg-white py-3',
+              'text-sm font-medium text-primary-gray',
+              'transition-colors duration-200 hover:bg-background',
+              (!email || resending || cooldown > 0) && 'cursor-not-allowed opacity-50',
+              email && !resending && cooldown === 0 && 'cursor-pointer'
+            )}
+          >
+            {resending
+              ? 'Sending…'
+              : cooldown > 0
+                ? `Resend email in ${cooldown}s`
+                : 'Resend verification email'}
+          </button>
+        </motion.div>
+
+        <motion.p variants={itemVariants} className="mt-6 text-sm text-secondary-gray">
+          Wrong email?{' '}
           <a href="/signup" className="font-medium text-primary hover:underline">
-            try signing up again
+            Sign up again
           </a>
-          .
         </motion.p>
       </motion.div>
     </div>

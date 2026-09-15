@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'motion/react';
-import { Building2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Building2, Check, Loader2 } from 'lucide-react';
 import clsx from 'clsx';
-import { createOrganization } from '../services/apis/organization.js';
+import { createOrganization, checkSlugAvailability } from '../services/apis/organization.js';
 import ErrorBanner from '../components/ui/ErrorBanner.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -33,6 +33,9 @@ export default function OrgSetupPage() {
   const [slugEdited, setSlugEdited] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [slugStatus, setSlugStatus] = useState('idle');
+  const [suggestion, setSuggestion] = useState('');
+  const latestSlugRef = useRef('');
 
   function handleNameChange(value) {
     setName(value);
@@ -44,9 +47,46 @@ export default function OrgSetupPage() {
     setSlug(slugify(value));
   }
 
+  function applySuggestion() {
+    if (!suggestion) return;
+    setSlugEdited(true);
+    setSlug(suggestion);
+  }
+
+  useEffect(() => {
+    if (slug.length < 3) {
+      setSlugStatus('idle');
+      setSuggestion('');
+      return undefined;
+    }
+
+    latestSlugRef.current = slug;
+    setSlugStatus('checking');
+    setSuggestion('');
+
+    const timer = setTimeout(async () => {
+      try {
+        const result = await checkSlugAvailability(slug);
+        if (latestSlugRef.current !== slug) return;
+        if (result.available) {
+          setSlugStatus('available');
+          setSuggestion('');
+        } else {
+          setSlugStatus('taken');
+          setSuggestion(result.suggestion || '');
+        }
+      } catch {
+        if (latestSlugRef.current !== slug) return;
+        setSlugStatus('idle');
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [slug]);
+
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!name.trim() || slug.length < 3 || loading) return;
+    if (!name.trim() || slug.length < 3 || slugStatus !== 'available' || loading) return;
 
     setError('');
     setLoading(true);
@@ -62,7 +102,65 @@ export default function OrgSetupPage() {
     }
   }
 
-  const canSubmit = name.trim() && slug.length >= 3 && !loading;
+  const canSubmit = name.trim() && slug.length >= 3 && slugStatus === 'available' && !loading;
+
+  function getSlugHint() {
+    if (slug.length > 0 && slug.length < 3) {
+      return {
+        key: 'short',
+        node: <span className="text-secondary-gray">Must be at least 3 characters</span>,
+      };
+    }
+    if (slug.length >= 3 && slugStatus === 'checking') {
+      return {
+        key: 'checking',
+        node: (
+          <span className="flex items-center gap-1.5 text-secondary-gray">
+            <Loader2 size={11} className="animate-spin" />
+            Checking availability…
+          </span>
+        ),
+      };
+    }
+    if (slugStatus === 'available') {
+      return {
+        key: 'available',
+        node: (
+          <span className="flex items-center gap-1.5 text-green-600">
+            <Check size={11} strokeWidth={3} />
+            Available
+          </span>
+        ),
+      };
+    }
+    if (slugStatus === 'taken') {
+      return {
+        key: 'taken',
+        node: (
+          <span className="text-red-500">
+            This URL is taken.
+            {suggestion && (
+              <>
+                {' '}
+                Try{' '}
+                <button
+                  type="button"
+                  onClick={applySuggestion}
+                  className="cursor-pointer font-medium text-primary underline hover:no-underline"
+                >
+                  {suggestion}
+                </button>
+                ?
+              </>
+            )}
+          </span>
+        ),
+      };
+    }
+    return null;
+  }
+
+  const slugHint = getSlugHint();
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-white px-8">
@@ -93,7 +191,7 @@ export default function OrgSetupPage() {
               />
               <input
                 type="text"
-                placeholder="Acme Corporation"
+                placeholder="Colabrix"
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
                 className={clsx(
@@ -119,16 +217,30 @@ export default function OrgSetupPage() {
               <span className="text-sm text-secondary-gray">colabrix.in/org/</span>
               <input
                 type="text"
-                placeholder="acme-corp"
+                placeholder="colabrix"
                 value={slug}
                 onChange={(e) => handleSlugChange(e.target.value)}
                 className="w-full bg-transparent py-3 text-sm text-primary-gray placeholder:text-secondary-gray/50 focus:outline-none"
               />
             </div>
-            {slug.length > 0 && slug.length < 3 && (
-              <p className="mt-1.5 text-[11px] text-secondary-gray">
-                Must be at least 3 characters
-              </p>
+
+            {slug.length > 0 && (
+              <div className="mt-1.5 min-h-[14px] text-[11px]">
+                <AnimatePresence mode="wait" initial={false}>
+                  {slugHint && (
+                    <motion.span
+                      key={slugHint.key}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
+                      className="block"
+                    >
+                      {slugHint.node}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </div>
             )}
           </motion.div>
 

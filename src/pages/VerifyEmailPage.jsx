@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { verifyEmail } from '../services/apis/auth.js';
+import { consumePendingInvite } from '../lib/pendingInvite.js';
 
 const containerVariants = {
   hidden: {},
@@ -29,7 +30,10 @@ export default function VerifyEmailPage() {
     verifyEmail(token)
       .then(() => {
         setStatus('success');
-        navigate('/get-started', { replace: true });
+        const pendingInviteToken = consumePendingInvite();
+        navigate(pendingInviteToken ? `/invite/${pendingInviteToken}` : '/get-started', {
+          replace: true,
+        });
       })
       .catch(() => setStatus('error'));
   }, [token, navigate]);

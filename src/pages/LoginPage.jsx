@@ -16,6 +16,7 @@ import { login } from '../services/apis/auth.js';
 import ErrorBanner from '../components/ui/ErrorBanner.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { resolveOrgDestination } from '../lib/orgRedirect.js';
+import { consumePendingInvite } from '../lib/pendingInvite.js';
 
 const features = [
   { icon: LayoutDashboard, label: 'Project Management' },
@@ -36,7 +37,7 @@ const itemVariants = {
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const { refetch, activeOrgSlug, setActiveOrgSlug } = useAuth();
+  const { refetch, setActiveOrgSlug } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -52,13 +53,24 @@ export default function LoginPage() {
     try {
       await login(email, password);
       const me = await refetch();
-      const destination = resolveOrgDestination(me?.organizations, activeOrgSlug);
+
+      const pendingInviteToken = consumePendingInvite();
+      if (pendingInviteToken) {
+        navigate(`/invite/${pendingInviteToken}`);
+        return;
+      }
+
+      const destination = resolveOrgDestination(me?.organizations);
       const [, , slug] = destination.split('/');
       if (destination.startsWith('/org/') && slug !== 'select') {
         setActiveOrgSlug(slug);
       }
       navigate(destination);
     } catch (err) {
+      if (err.message === 'Please verify your email before logging in') {
+        navigate(`/check-email?email=${encodeURIComponent(email)}`, { state: { email } });
+        return;
+      }
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -212,7 +224,7 @@ export default function LoginPage() {
 
             <motion.div variants={itemVariants} className="flex justify-end">
               <a
-                href="#"
+                href="/forgot-password"
                 className="text-[13px] font-medium text-[#b9bbf6] transition-colors hover:text-primary"
               >
                 Forgot password?

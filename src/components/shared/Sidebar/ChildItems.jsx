@@ -10,7 +10,7 @@ function ChildItems({ item, isCollapsed, isLast, activeTab, setActiveTab }) {
   return (
     <motion.div
       layout
-      className="sidebar-text relative pb-1"
+      className={clsx('sidebar-text relative', isCollapsed ? 'pb-0.5' : 'pb-1')}
       onMouseEnter={() => setShowSidebarToolTip(true)}
       onMouseLeave={() => setShowSidebarToolTip(false)}
       onClick={() => setActiveTab(item.key)}
@@ -32,8 +32,8 @@ function ChildItems({ item, isCollapsed, isLast, activeTab, setActiveTab }) {
         href={item.href}
         className={clsx(
           activeTab === item.key ? 'bg-primary text-white' : 'hover:bg-indigo-50',
-          isCollapsed && 'pl-[14px]',
-          'relative flex items-center gap-2 rounded-lg p-1.5 transition-all'
+          isCollapsed ? 'p-1 pl-[14px]' : 'p-1.5',
+          'relative flex items-center gap-2 rounded-lg transition-all'
         )}
       >
         {Icon && <Icon size={14} className="block w-fit shrink-0" />}

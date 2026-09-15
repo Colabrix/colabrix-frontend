@@ -23,6 +23,11 @@ export async function login(email, password) {
   return res.data;
 }
 
+export async function resendVerification(email) {
+  const res = await apiClient.post('/v1/auth/resend-verification', { email });
+  return res.data;
+}
+
 export async function logout() {
   await apiClient.post('/v1/auth/logout');
   removeAuthToken();

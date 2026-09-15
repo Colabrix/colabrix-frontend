@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Building2, ChevronRight } from 'lucide-react';
+import { Building2, ChevronRight, Plus } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 
 const containerVariants = {
@@ -78,6 +78,24 @@ export default function OrgSelectPage() {
               <ChevronRight size={16} className="shrink-0 text-secondary-gray" />
             </motion.button>
           ))}
+
+          <motion.button
+            variants={itemVariants}
+            type="button"
+            onClick={() => navigate('/onboarding/organization')}
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.99 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+            className="flex w-full cursor-pointer items-center gap-4 rounded-2xl border border-dashed border-border-gray p-4 text-left transition-colors duration-200 hover:border-primary/40 hover:bg-primary/5"
+          >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-background">
+              <Plus size={18} className="text-secondary-gray" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-primary-gray">Create new organisation</p>
+              <p className="mt-0.5 text-[13px] text-secondary-gray">Set up another workspace</p>
+            </div>
+          </motion.button>
         </div>
       </motion.div>
     </div>

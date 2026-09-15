@@ -33,8 +33,12 @@ export default function SignupPage() {
     setLoading(true);
     try {
       await register(email, password);
-      navigate('/check-email', { state: { email } });
+      navigate(`/check-email?email=${encodeURIComponent(email)}`, { state: { email } });
     } catch (err) {
+      if (err.message === 'Email already registered but not verified') {
+        navigate(`/check-email?email=${encodeURIComponent(email)}`, { state: { email } });
+        return;
+      }
       setError(err.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
